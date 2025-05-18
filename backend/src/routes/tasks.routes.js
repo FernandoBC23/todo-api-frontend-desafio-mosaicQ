@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 
+
 // Criar nova tarefa
 router.post('/', async (req, res) => {
   const { titulo, descricao, status } = req.body;
@@ -32,6 +33,32 @@ router.post('/', async (req, res) => {
   }
 });
 
+
+
+// Atualizar uma tarefa existente
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descricao, status } = req.body;
+
+  if (!titulo || !status) {
+    return res.status(400).json({ error: 'Título e status são obrigatórios' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE tasks SET titulo = $1, descricao = $2, status = $3 WHERE id = $4 RETURNING *',
+      [titulo, descricao, status, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Tarefa não encontrada' });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar tarefa' });
+  }
+});
 
 
 module.exports = router;
