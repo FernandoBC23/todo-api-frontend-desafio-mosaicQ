@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 
+
 // Listar todas as tarefas
 router.get('/', async (req, res) => {
   try {
@@ -57,6 +58,25 @@ router.put('/:id', async (req, res) => {
     res.status(200).json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao atualizar tarefa' });
+  }
+});
+
+
+
+// Deletar uma tarefa
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM tasks WHERE id = $1 RETURNING *', [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Tarefa não encontrada' });
+    }
+
+    res.status(200).json({ message: 'Tarefa removida com sucesso' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao remover tarefa' });
   }
 });
 
