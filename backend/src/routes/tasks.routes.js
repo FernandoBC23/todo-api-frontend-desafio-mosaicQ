@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 
-
 // Criar nova tarefa
 router.post('/', async (req, res) => {
   const { titulo, descricao, status } = req.body;
@@ -33,7 +32,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Erro ao criar tarefa' });
   }
 });
-
 
 
 // Atualizar uma tarefa existente
@@ -60,7 +58,6 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao atualizar tarefa' });
   }
 });
-
 
 
 // Deletar uma tarefa
