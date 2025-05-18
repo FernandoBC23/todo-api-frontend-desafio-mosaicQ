@@ -2,6 +2,9 @@
 const express = require('express');
 const cors = require('cors');
 
+require('./config/db'); // Força a conexão ao iniciar o app
+
+
 const app = express();
 
 // Middlewares
