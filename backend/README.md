@@ -13,6 +13,7 @@ API desenvolvida em Node.js com Express e PostgreSQL para gerenciamento de taref
 - JWT (autenticação)
 - pg (driver PostgreSQL)
 - dotenv (variáveis de ambiente)
+- Swagger (documentação da API)
 
 ---
 
@@ -127,3 +128,13 @@ Authorization: Bearer <seu_token>
 ```
 
 ---
+
+## 📚 Documentação da API (Swagger)
+
+A API possui documentação interativa com Swagger disponível após iniciar o servidor.
+
+Acesse em:
+
+[http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+Lá você pode visualizar os endpoints, fazer requisições autenticadas e testar a API diretamente pela interface gráfica.
