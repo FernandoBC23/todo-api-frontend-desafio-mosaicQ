@@ -17,6 +17,17 @@ function TarefasPage() {
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('pendente');
 
+  const [modoEdicao, setModoEdicao] = useState(false);
+  const [idEditando, setIdEditando] = useState<number | null>(null);
+
+  const preencherFormularioEdicao = (tarefa: Tarefa) => {
+  setModoEdicao(true);
+  setIdEditando(tarefa.id);
+  setTitulo(tarefa.titulo);
+  setDescricao(tarefa.descricao || '');
+  setStatus(tarefa.status);
+};
+
   useEffect(() => {
     const token = localStorage.getItem('token');
 
@@ -67,38 +78,98 @@ function TarefasPage() {
     }
   };
 
+
+    const handleAtualizarTarefa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErro('');
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/${idEditando}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ titulo, descricao, status }),
+        });
+
+        if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Erro ao atualizar tarefa');
+        }
+
+        const tarefaAtualizada = await response.json();
+
+        setTarefas((prev) =>
+        prev.map((t) => (t.id === idEditando ? tarefaAtualizada : t))
+        );
+
+        // Limpa e volta ao modo criação
+        setModoEdicao(false);
+        setIdEditando(null);
+        setTitulo('');
+        setDescricao('');
+        setStatus('pendente');
+    } catch (err: any) {
+        setErro(err.message);
+    }
+    };
+
+
   return (
     <div style={{ maxWidth: 600, margin: '30px auto' }}>
       <h2>📋 Lista de Tarefas</h2>
 
       {/* Formulário de nova tarefa */}
-      <form onSubmit={handleCriarTarefa} style={{ marginBottom: 30 }}>
-        <h3>➕ Criar nova tarefa</h3>
+        <form onSubmit={modoEdicao ? handleAtualizarTarefa : handleCriarTarefa} style={{ marginBottom: 30 }}>
+        <h3>{modoEdicao ? '✏️ Editar tarefa' : '➕ Criar nova tarefa'}</h3>
+
         <div>
-          <input
+            <input
             type="text"
             placeholder="Título"
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
             required
-          />
+            />
         </div>
         <div>
-          <textarea
+            <textarea
             placeholder="Descrição"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
-          />
+            />
         </div>
         <div>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="pendente">Pendente</option>
             <option value="em progresso">Em progresso</option>
             <option value="concluída">Concluída</option>
-          </select>
+            </select>
         </div>
-        <button type="submit">Criar</button>
-      </form>
+
+        <button type="submit">
+            {modoEdicao ? 'Salvar alterações' : 'Criar'}
+        </button>
+
+        {modoEdicao && (
+            <button
+            type="button"
+            onClick={() => {
+                setModoEdicao(false);
+                setIdEditando(null);
+                setTitulo('');
+                setDescricao('');
+                setStatus('pendente');
+            }}
+            style={{ marginLeft: 10 }}
+            >
+            Cancelar
+            </button>
+        )}
+        </form>
+
 
       {/* Exibição de tarefas */}
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
@@ -106,15 +177,17 @@ function TarefasPage() {
         <p>Nenhuma tarefa encontrada.</p>
       ) : (
         <ul>
-          {tarefas.map((tarefa) => (
+            {tarefas.map((tarefa) => (
             <li key={tarefa.id}>
                 <strong>{tarefa.titulo}</strong> - {tarefa.status}
                 <br />
                 {tarefa.descricao && <p>{tarefa.descricao}</p>}
                 <small>Criada em: {new Date(tarefa.data_criacao).toLocaleDateString()}</small>
-              <hr />
+                <br />
+                <button onClick={() => preencherFormularioEdicao(tarefa)}>Editar</button>
+                <hr />
             </li>
-          ))}
+            ))}
         </ul>
       )}
     </div>
