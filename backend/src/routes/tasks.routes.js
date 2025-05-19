@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
+const authMiddleware = require('../middlewares/authMiddleware');
 
+router.use(authMiddleware);
 
 // Listar todas as tarefas
 router.get('/', async (req, res) => {
