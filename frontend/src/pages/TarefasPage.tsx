@@ -1,4 +1,7 @@
+// frontend/src/pages/TarefasPage.tsx
+
 import { useEffect, useState } from 'react';
+import NovaTarefaForm from '../components/NovaTarefaForm';
 
 interface Tarefa {
   id: number;
@@ -11,230 +14,148 @@ interface Tarefa {
 function TarefasPage() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [erro, setErro] = useState('');
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [tarefaEditando, setTarefaEditando] = useState<Tarefa | null>(null);
+  const token = localStorage.getItem('token');
 
-  // Estados do formulário
-  const [titulo, setTitulo] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [status, setStatus] = useState('pendente');
-
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [idEditando, setIdEditando] = useState<number | null>(null);
-
-  const preencherFormularioEdicao = (tarefa: Tarefa) => {
-  setModoEdicao(true);
-  setIdEditando(tarefa.id);
-  setTitulo(tarefa.titulo);
-  setDescricao(tarefa.descricao || '');
-  setStatus(tarefa.status);
-};
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    fetch('http://localhost:3000/tasks', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || 'Erro ao buscar tarefas');
-        }
-        return res.json();
-      })
-      .then((data) => setTarefas(data))
-      .catch((err) => setErro(err.message));
-  }, []);
-
-  const handleCriarTarefa = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErro('');
-
-    const token = localStorage.getItem('token');
-
+  const carregarTarefas = async () => {
     try {
       const response = await fetch('http://localhost:3000/tasks', {
-        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ titulo, descricao, status }),
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao criar tarefa');
-      }
-
-      const novaTarefa = await response.json();
-      setTarefas([...tarefas, novaTarefa]);
-      setTitulo('');
-      setDescricao('');
-      setStatus('pendente');
+      const data = await response.json();
+      setTarefas(data);
     } catch (err: any) {
       setErro(err.message);
     }
   };
 
+  useEffect(() => {
+    carregarTarefas();
+  }, []);
 
-    const handleAtualizarTarefa = async (e: React.FormEvent) => {
+  const atualizarCampo = (campo: keyof Tarefa, valor: string) => {
+    if (tarefaEditando) {
+      setTarefaEditando({ ...tarefaEditando, [campo]: valor });
+    }
+  };
+
+  const salvarEdicao = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErro('');
-    const token = localStorage.getItem('token');
+    if (!tarefaEditando) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/tasks/${idEditando}`, {
+      const response = await fetch(`http://localhost:3000/tasks/${tarefaEditando.id}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ titulo, descricao, status }),
-        });
-
-        if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao atualizar tarefa');
-        }
-
-        const tarefaAtualizada = await response.json();
-
-        setTarefas((prev) =>
-        prev.map((t) => (t.id === idEditando ? tarefaAtualizada : t))
-        );
-
-        // Limpa e volta ao modo criação
-        setModoEdicao(false);
-        setIdEditando(null);
-        setTitulo('');
-        setDescricao('');
-        setStatus('pendente');
+        body: JSON.stringify(tarefaEditando),
+      });
+      const atualizada = await response.json();
+      setTarefas(tarefas.map((t) => (t.id === atualizada.id ? atualizada : t)));
+      setTarefaEditando(null);
     } catch (err: any) {
-        setErro(err.message);
+      setErro(err.message);
     }
-    };
+  };
 
-
-    const handleRemoverTarefa = async (id: number) => {
-    const confirmar = window.confirm('Tem certeza que deseja excluir esta tarefa?');
-    if (!confirmar) return;
-
-    const token = localStorage.getItem('token');
-
+  const excluirTarefa = async (id: number) => {
     try {
-        const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+      await fetch(`http://localhost:3000/tasks/${id}`, {
         method: 'DELETE',
         headers: {
-            Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        });
-
-        if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao excluir tarefa');
-        }
-
-        // Atualiza lista local
-        setTarefas((prev) => prev.filter((t) => t.id !== id));
+      });
+      setTarefas(tarefas.filter((t) => t.id !== id));
     } catch (err: any) {
-        setErro(err.message);
+      setErro(err.message);
     }
-    };
+  };
 
-
-
-  return (
-    <div style={{ maxWidth: 600, margin: '30px auto' }}>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>📋 Lista de Tarefas</h2>
-        <button
-            onClick={() => {
-            localStorage.removeItem('token');
-            window.location.href = '/';
-            }}
-            style={{ padding: '4px 10px' }}
-        >
-            Logout
-        </button>
-        </div>
-
-      {/* Formulário de nova tarefa */}
-        <form onSubmit={modoEdicao ? handleAtualizarTarefa : handleCriarTarefa} style={{ marginBottom: 30 }}>
-        <h3>{modoEdicao ? '✏️ Editar tarefa' : '➕ Criar nova tarefa'}</h3>
-
-        <div>
-            <input
-            type="text"
-            placeholder="Título"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            required
-            />
-        </div>
-        <div>
-            <textarea
-            placeholder="Descrição"
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-            />
-        </div>
-        <div>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="pendente">Pendente</option>
-            <option value="em progresso">Em progresso</option>
-            <option value="concluída">Concluída</option>
-            </select>
-        </div>
-
-        <button type="submit">
-            {modoEdicao ? 'Salvar alterações' : 'Criar'}
-        </button>
-
-        {modoEdicao && (
-            <button
-            type="button"
-            onClick={() => {
-                setModoEdicao(false);
-                setIdEditando(null);
-                setTitulo('');
-                setDescricao('');
-                setStatus('pendente');
-            }}
-            style={{ marginLeft: 10 }}
-            >
-            Cancelar
-            </button>
-        )}
-        </form>
-
-
-      {/* Exibição de tarefas */}
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      {tarefas.length === 0 ? (
-        <p>Nenhuma tarefa encontrada.</p>
-      ) : (
-        <ul>
-        {tarefas.map((tarefa) => (
-            <li key={tarefa.id}>
-            <strong>{tarefa.titulo}</strong> - {tarefa.status}
-            <br />
-            {tarefa.descricao && <p>{tarefa.descricao}</p>}
-            <small>Criada em: {new Date(tarefa.data_criacao).toLocaleDateString()}</small>
-            <br />
-            <button onClick={() => preencherFormularioEdicao(tarefa)}>Editar</button>
-            <button onClick={() => handleRemoverTarefa(tarefa.id)} style={{ marginLeft: 8 }}>
-                Excluir
-            </button>
-            <hr />
-            </li>
-        ))}
-        </ul>
-      )}
+return (
+  <div className="container">
+    {/* Botão de Logout */}
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+      <button
+        onClick={() => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }}
+        style={{ backgroundColor: '#dc3545' }}
+      >
+        Logout
+      </button>
     </div>
-  );
+
+    <h2>Lista Tarefas</h2>
+
+    <button onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+      {mostrarFormulario ? 'Cancelar' : 'Nova Tarefa'}
+    </button>
+
+    {mostrarFormulario && (
+      <NovaTarefaForm
+        onTarefaCriada={() => {
+          carregarTarefas();
+          setMostrarFormulario(false);
+        }}
+      />
+    )}
+
+    {tarefas.length === 0 ? (
+      <p>Nenhuma tarefa encontrada.</p>
+    ) : (
+      <ul>
+        {tarefas.map((tarefa) => (
+          <li key={tarefa.id}>
+            {tarefaEditando?.id === tarefa.id ? (
+              <form onSubmit={salvarEdicao}>
+                <input
+                  type="text"
+                  value={tarefaEditando.titulo}
+                  onChange={(e) => atualizarCampo('titulo', e.target.value)}
+                  placeholder="Título"
+                />
+                <input
+                  type="text"
+                  value={tarefaEditando.descricao}
+                  onChange={(e) => atualizarCampo('descricao', e.target.value)}
+                  placeholder="Descrição"
+                />
+                <select
+                  value={tarefaEditando.status}
+                  onChange={(e) => atualizarCampo('status', e.target.value)}
+                >
+                  <option value="pendente">Pendente</option>
+                  <option value="em progresso">Em Progresso</option>
+                  <option value="concluída">Concluída</option>
+                </select>
+                <button type="submit">Salvar</button>
+                <button type="button" onClick={() => setTarefaEditando(null)}>
+                  Cancelar
+                </button>
+              </form>
+            ) : (
+              <>
+                <strong>{tarefa.titulo}</strong> — {tarefa.status}
+                <br />
+                <small>{tarefa.descricao}</small>
+                <br />
+                <button onClick={() => excluirTarefa(tarefa.id)}>Excluir</button>
+                <button onClick={() => setTarefaEditando(tarefa)}>Editar</button>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+);
 }
 
 export default TarefasPage;
