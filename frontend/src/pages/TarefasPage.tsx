@@ -117,6 +117,34 @@ function TarefasPage() {
     };
 
 
+    const handleRemoverTarefa = async (id: number) => {
+    const confirmar = window.confirm('Tem certeza que deseja excluir esta tarefa?');
+    if (!confirmar) return;
+
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        });
+
+        if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Erro ao excluir tarefa');
+        }
+
+        // Atualiza lista local
+        setTarefas((prev) => prev.filter((t) => t.id !== id));
+    } catch (err: any) {
+        setErro(err.message);
+    }
+    };
+
+
+
   return (
     <div style={{ maxWidth: 600, margin: '30px auto' }}>
       <h2>📋 Lista de Tarefas</h2>
@@ -177,17 +205,20 @@ function TarefasPage() {
         <p>Nenhuma tarefa encontrada.</p>
       ) : (
         <ul>
-            {tarefas.map((tarefa) => (
+        {tarefas.map((tarefa) => (
             <li key={tarefa.id}>
-                <strong>{tarefa.titulo}</strong> - {tarefa.status}
-                <br />
-                {tarefa.descricao && <p>{tarefa.descricao}</p>}
-                <small>Criada em: {new Date(tarefa.data_criacao).toLocaleDateString()}</small>
-                <br />
-                <button onClick={() => preencherFormularioEdicao(tarefa)}>Editar</button>
-                <hr />
+            <strong>{tarefa.titulo}</strong> - {tarefa.status}
+            <br />
+            {tarefa.descricao && <p>{tarefa.descricao}</p>}
+            <small>Criada em: {new Date(tarefa.data_criacao).toLocaleDateString()}</small>
+            <br />
+            <button onClick={() => preencherFormularioEdicao(tarefa)}>Editar</button>
+            <button onClick={() => handleRemoverTarefa(tarefa.id)} style={{ marginLeft: 8 }}>
+                Excluir
+            </button>
+            <hr />
             </li>
-            ))}
+        ))}
         </ul>
       )}
     </div>
