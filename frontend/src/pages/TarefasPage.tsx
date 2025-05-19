@@ -94,6 +94,9 @@ return (
 
     <h2>Lista Tarefas</h2>
 
+    {/* Aqui vem a mensagem de erro */}
+    {erro && <p style={{ color: 'red', marginBottom: 10 }}>{erro}</p>}
+
     <button onClick={() => setMostrarFormulario(!mostrarFormulario)}>
       {mostrarFormulario ? 'Cancelar' : 'Nova Tarefa'}
     </button>
