@@ -69,3 +69,61 @@ A API estará disponível em: [http://localhost:3000](http://localhost:3000)
 
 ---
 
+## 🔐 Autenticação
+
+Para acessar as rotas protegidas, você deve primeiro fazer login:
+
+### Login
+
+```
+POST /auth/login
+```
+
+#### Body (JSON)
+
+```json
+{
+  "email": "admin@email.com",
+  "senha": "123456"
+}
+```
+
+Se os dados estiverem corretos, a API retornará um **token JWT**:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+Esse token deve ser enviado no **cabeçalho Authorization** nas rotas protegidas:
+
+```
+Authorization: Bearer SEU_TOKEN_AQUI
+```
+
+---
+
+## 📄 Endpoints disponíveis
+
+| Método | Rota             | Protegida | Descrição                     |
+|--------|------------------|-----------|-------------------------------|
+| POST   | `/auth/login`    | ❌        | Autentica usuário e retorna token |
+| GET    | `/tasks`         | ✅        | Lista todas as tarefas        |
+| POST   | `/tasks`         | ✅        | Cria uma nova tarefa          |
+| PUT    | `/tasks/:id`     | ✅        | Atualiza uma tarefa existente |
+| DELETE | `/tasks/:id`     | ✅        | Remove uma tarefa             |
+
+---
+
+## ✅ Acesso autorizado
+
+Todas as rotas `/tasks` exigem autenticação com JWT.
+
+Use o token retornado no login para acessar as rotas protegidas com o cabeçalho:
+
+```
+Authorization: Bearer <seu_token>
+```
+
+---
