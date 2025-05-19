@@ -1,8 +1,15 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import TarefasPage from './pages/TarefasPage';
+
 function App() {
   return (
-    <div>
-      <h1>Todo App - Desafio Técnico</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/tarefas" element={<TarefasPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
