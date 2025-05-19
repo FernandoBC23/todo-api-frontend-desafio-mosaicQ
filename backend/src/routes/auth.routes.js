@@ -12,6 +12,36 @@ const fakeUser = {
   password: '$2b$10$ttMuSD2m55G8hZSBP/7yOOJZBqQ7OOLI9u7iwGgK56qj75pJJXMD.' // senha: 123456
 };
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Realiza login e retorna um token JWT
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: admin@email.com
+ *               senha:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Token JWT gerado
+ *       401:
+ *         description: Credenciais inválidas
+ */
+
+
 router.post('/login', async (req, res) => {
   const { email, senha } = req.body;
 

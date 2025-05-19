@@ -5,6 +5,22 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.use(authMiddleware);
 
+
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Lista todas as tarefas
+ *     tags: [Tarefas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de tarefas
+ */
+
+
+
 // Listar todas as tarefas
 router.get('/', async (req, res) => {
   try {
@@ -14,6 +30,40 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar tarefas' });
   }
 });
+
+
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     summary: Cria uma nova tarefa
+ *     tags: [Tarefas]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - titulo
+ *               - status
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               descricao:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pendente, em progresso, concluída]
+ *     responses:
+ *       201:
+ *         description: Tarefa criada com sucesso
+ *       400:
+ *         description: Dados inválidos
+ */
+
 
 
 // Criar nova tarefa
@@ -34,6 +84,47 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Erro ao criar tarefa' });
   }
 });
+
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   put:
+ *     summary: Atualiza uma tarefa existente
+ *     tags: [Tarefas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da tarefa a ser atualizada
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - titulo
+ *               - status
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               descricao:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pendente, em progresso, concluída]
+ *     responses:
+ *       200:
+ *         description: Tarefa atualizada com sucesso
+ *       404:
+ *         description: Tarefa não encontrada
+ */
+
 
 
 // Atualizar uma tarefa existente
@@ -60,6 +151,30 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao atualizar tarefa' });
   }
 });
+
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   delete:
+ *     summary: Remove uma tarefa
+ *     tags: [Tarefas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da tarefa a ser removida
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Tarefa removida com sucesso
+ *       404:
+ *         description: Tarefa não encontrada
+ */
+
 
 
 // Deletar uma tarefa
