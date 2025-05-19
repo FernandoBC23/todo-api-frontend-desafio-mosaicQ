@@ -147,7 +147,19 @@ function TarefasPage() {
 
   return (
     <div style={{ maxWidth: 600, margin: '30px auto' }}>
-      <h2>📋 Lista de Tarefas</h2>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>📋 Lista de Tarefas</h2>
+        <button
+            onClick={() => {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+            }}
+            style={{ padding: '4px 10px' }}
+        >
+            Logout
+        </button>
+        </div>
 
       {/* Formulário de nova tarefa */}
         <form onSubmit={modoEdicao ? handleAtualizarTarefa : handleCriarTarefa} style={{ marginBottom: 30 }}>
