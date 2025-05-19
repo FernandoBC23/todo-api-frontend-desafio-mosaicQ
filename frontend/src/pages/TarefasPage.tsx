@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import NovaTarefaForm from '../components/NovaTarefaForm';
+import { FaTrash, FaEdit } from 'react-icons/fa';
+import { FaClipboardList } from 'react-icons/fa';
+
 
 interface Tarefa {
   id: number;
@@ -80,24 +83,26 @@ function TarefasPage() {
 return (
   <div className="container">
     {/* Botão de Logout */}
-    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+    <div className="logout-wrapper">
       <button
+        className="logout"
         onClick={() => {
           localStorage.removeItem('token');
           window.location.href = '/';
         }}
-        style={{ backgroundColor: '#dc3545' }}
       >
         Logout
       </button>
     </div>
 
-    <h2>Lista Tarefas</h2>
 
-    {/* Aqui vem a mensagem de erro */}
+    <h2><FaClipboardList style={{ marginRight: '10px' }} /> Lista de Tarefas</h2>
+    <p className="subtitulo">Organize seu dia com praticidade</p>
+
+
     {erro && <p style={{ color: 'red', marginBottom: 10 }}>{erro}</p>}
 
-    <button onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+    <button className="nova-tarefa" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
       {mostrarFormulario ? 'Cancelar' : 'Nova Tarefa'}
     </button>
 
@@ -113,52 +118,76 @@ return (
     {tarefas.length === 0 ? (
       <p>Nenhuma tarefa encontrada.</p>
     ) : (
-      <ul>
-        {tarefas.map((tarefa) => (
-          <li key={tarefa.id}>
-            {tarefaEditando?.id === tarefa.id ? (
-              <form onSubmit={salvarEdicao}>
-                <input
-                  type="text"
-                  value={tarefaEditando.titulo}
-                  onChange={(e) => atualizarCampo('titulo', e.target.value)}
-                  placeholder="Título"
-                />
-                <input
-                  type="text"
-                  value={tarefaEditando.descricao}
-                  onChange={(e) => atualizarCampo('descricao', e.target.value)}
-                  placeholder="Descrição"
-                />
-                <select
-                  value={tarefaEditando.status}
-                  onChange={(e) => atualizarCampo('status', e.target.value)}
-                >
-                  <option value="pendente">Pendente</option>
-                  <option value="em progresso">Em Progresso</option>
-                  <option value="concluída">Concluída</option>
-                </select>
-                <button type="submit">Salvar</button>
-                <button type="button" onClick={() => setTarefaEditando(null)}>
-                  Cancelar
-                </button>
-              </form>
-            ) : (
-              <>
-                <strong>{tarefa.titulo}</strong> — {tarefa.status}
-                <br />
-                <small>{tarefa.descricao}</small>
-                <br />
-                <button onClick={() => excluirTarefa(tarefa.id)}>Excluir</button>
-                <button onClick={() => setTarefaEditando(tarefa)}>Editar</button>
-              </>
-            )}
-          </li>
+      <div className="quadro-tarefas">
+        {['pendente', 'em progresso', 'concluída'].map((status) => (
+          <div className="coluna-tarefas" key={status}>
+            <h3>
+              {status === 'pendente'
+                ? 'Pendentes'
+                : status === 'em progresso'
+                ? 'Em Progresso'
+                : 'Concluídas'}
+            </h3>
+            <ul>
+              {tarefas
+                .filter((t) => t.status === status)
+                .map((tarefa) => (
+                  <li key={tarefa.id} className={tarefa.status.replace(' ', '-')}>
+                    {tarefaEditando?.id === tarefa.id ? (
+                      <form onSubmit={salvarEdicao}>
+                        <input
+                          type="text"
+                          value={tarefaEditando.titulo}
+                          onChange={(e) => atualizarCampo('titulo', e.target.value)}
+                          placeholder="Título"
+                        />
+                        <input
+                          type="text"
+                          value={tarefaEditando.descricao}
+                          onChange={(e) => atualizarCampo('descricao', e.target.value)}
+                          placeholder="Descrição"
+                        />
+                        <select
+                          value={tarefaEditando.status}
+                          onChange={(e) => atualizarCampo('status', e.target.value)}
+                        >
+                          <option value="pendente">Pendente</option>
+                          <option value="em progresso">Em Progresso</option>
+                          <option value="concluída">Concluída</option>
+                        </select>
+                        <button type="submit">Salvar</button>
+                        <button type="button" onClick={() => setTarefaEditando(null)}>
+                          Cancelar
+                        </button>
+                      </form>
+                    ) : (
+                      <>
+                        <strong>{tarefa.titulo}</strong>                        
+                        <small>{tarefa.descricao}</small>
+                        <br />
+                        <div className="botoes-acoes">
+                          <button className="excluir" onClick={() => excluirTarefa(tarefa.id)}>
+                            <FaTrash style={{ marginRight: '6px' }} />
+                            Excluir
+                          </button>
+
+                          <button className="editar" onClick={() => setTarefaEditando(tarefa)}>
+                            <FaEdit style={{ marginRight: '6px' }} />
+                            Editar
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </li>
+                ))}
+            </ul>
+          </div>
         ))}
-      </ul>
+      </div>
     )}
   </div>
 );
+
 }
 
 export default TarefasPage;

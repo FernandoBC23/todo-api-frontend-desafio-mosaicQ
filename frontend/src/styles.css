@@ -1,35 +1,67 @@
-/* Reset básico */
+/* RESET BÁSICO */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+.login-container {
+  background-color: #ffffff;
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.login-titulo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #222;
+}
+
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f6f8;
+  background-color: #1f1f28;
   color: #333;
   padding: 20px;
 }
 
-/* Container central */
+/* CONTAINER PRINCIPAL */
 .container {
-  max-width: 600px;
+  max-width: 1280px;
   margin: 0 auto;
   background: #fff;
   padding: 32px;
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Títulos */
-h2,
-h3 {
+/* TÍTULOS */
+h2, h3 {
   margin-bottom: 24px;
   text-align: center;
 }
 
-/* Formulários */
+h2 {
+  font-size: 38px;
+  font-weight: 700;
+  color: #222; /* Ou branco se mudar para tema escuro total */
+  margin-bottom: 12px;
+}
+
+.subtitulo {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+
+/* FORMULÁRIOS */
 form {
   display: flex;
   flex-direction: column;
@@ -58,8 +90,7 @@ form select {
   color: #333;
 }
 
-
-/* Botões */
+/* BOTÕES GERAIS */
 button {
   padding: 10px 14px;
   font-size: 15px;
@@ -85,49 +116,132 @@ button + button:hover {
   background-color: #5a6268;
 }
 
-/* Lista de tarefas */
+.logout-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+
+button.logout {
+  background-color: #2f3640;
+  color: #f1f1f1;
+  padding: 8px 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button.logout:hover {
+  background-color: #3e4450;
+  transform: translateY(-1px);
+}
+
+
+/* BOTÕES ESPECÍFICOS */
+button.editar {
+  background-color: #6c757d;
+}
+button.editar:hover {
+  background-color: #5a6268;
+}
+
+button.excluir {
+  background-color: #dc3545;
+}
+button.excluir:hover {
+  background-color: #c82333;
+}
+
+.nova-tarefa {
+  margin: 20px 0;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: #1266ac;
+}
+.nova-tarefa:hover {
+  background-color: #4ba7f3;
+}
+
+/* GRUPO DE BOTÕES DE AÇÃO */
+.botoes-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: auto; /* Fixa no rodapé do card */
+}
+
+/* LISTA DE TAREFAS */
 ul {
   list-style: none;
   padding: 0;
 }
 
 li {
-  background-color: #f1f1f1;
-  padding: 16px;
+  background-color: #ffffff;
+  padding: 20px;
   margin-bottom: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 180px;
+}
+
+li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 li strong {
   display: block;
   font-size: 18px;
-  margin-bottom: 4px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #222;
 }
 
 li small {
-  color: #555;
-  display: block;
-  margin-bottom: 8px;
+  color: #666;
+  font-size: 14px;
 }
 
-/* Responsividade */
-@media (max-width: 600px) {
-  .container {
-    padding: 20px;
-  }
-
-  form input,
-  form select,
-  button {
-    font-size: 14px;
-  }
-
-  li {
-    padding: 12px;
-  }
+/* CORES POR STATUS */
+li.pendente {
+  border-left: 6px solid #fd7e14;
+  background-color: rgba(243, 156, 18, 0.05);
 }
 
-/* Responsividade */
+li.em-progresso {
+  border-left: 6px solid #007bff;
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+li.concluída {
+  border-left: 6px solid #28a745;
+  background-color: rgba(40, 167, 69, 0.05);
+}
+
+/* LAYOUT DE COLUNAS */
+.quadro-tarefas {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.coluna-tarefas h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: #007bff;
+  text-align: center;
+}
+
+/* RESPONSIVIDADE */
 @media (max-width: 600px) {
   .container {
     padding: 20px;
@@ -152,5 +266,17 @@ li small {
 
   h2 {
     font-size: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .quadro-tarefas {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .coluna-tarefas {
+    flex: 1;
+    padding: 0 8px;
   }
 }

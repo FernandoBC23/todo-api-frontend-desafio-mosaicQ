@@ -24,19 +24,19 @@ function LoginPage() {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token); // salva o token
-      navigate('/tarefas'); // redireciona
+      localStorage.setItem('token', data.token);
+      navigate('/tarefas');
     } catch (err: any) {
       setErro(err.message);
     }
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '50px auto' }}>
-      <h2>Login</h2>
+    <div className="login-container">
+      <h2 className="login-titulo">Login</h2>
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Email:</label><br />
+        <div className="form-group">
+          <label>Email:</label>
           <input
             type="email"
             value={email}
@@ -44,9 +44,9 @@ function LoginPage() {
             required
           />
         </div>
-        <br />
-        <div>
-          <label>Senha:</label><br />
+
+        <div className="form-group">
+          <label>Senha:</label>
           <input
             type="password"
             value={senha}
@@ -54,8 +54,9 @@ function LoginPage() {
             required
           />
         </div>
-        <br />
+
         {erro && <p style={{ color: 'red' }}>{erro}</p>}
+
         <button type="submit">Entrar</button>
       </form>
     </div>
