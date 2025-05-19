@@ -1,54 +1,87 @@
-# React + TypeScript + Vite
+# 🖥️ Frontend - Todo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web desenvolvida em **React + TypeScript + Vite** para gerenciar tarefas conectando-se à API do backend.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ⚙️ Tecnologias Utilizadas
 
-## Expanding the ESLint configuration
+- React
+- TypeScript
+- Vite
+- HTML e CSS
+- Fetch API
+- Responsividade com CSS puro
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🔐 Autenticação
+
+O usuário deve realizar login com e-mail e senha válidos para obter um **token JWT**, que será salvo no `localStorage`.
+
+O token é usado para acessar as rotas protegidas da API.
+
+---
+
+## 🚀 Como rodar o frontend localmente
+
+### 1. Instale as dependências
+
+```bash
+cd frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Inicie o projeto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run dev
 ```
+
+A aplicação será aberta em: [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 💡 Funcionalidades
+
+- Login com autenticação JWT
+- Visualização de tarefas
+- Criação de nova tarefa
+- Edição e exclusão de tarefas
+- Validação e exibição de mensagens de erro
+- Interface responsiva e moderna
+- Logout
+
+---
+
+## 📁 Estrutura de Pastas
+
+```
+src/
+├── components/
+│   └── PrivateRoute.tsx
+│   └── NovaTarefaForm.tsx
+├── pages/
+│   └── LoginPage.tsx
+│   └── TarefasPage.tsx
+├── styles.css
+```
+
+---
+
+## 🧩 Backend
+
+O frontend consome os dados da API implementada em Node.js, disponível na pasta `backend`.
+
+---
+
+## ✅ Requisitos Atendidos
+
+- [x] Utiliza React com TypeScript
+- [x] Conecta-se com a API desenvolvida
+- [x] Permite criar, visualizar, editar e excluir tarefas
+- [x] Apresenta uma interface responsiva e amigável
+
+---
+
+> Desenvolvido como parte do desafio técnico proposto.
